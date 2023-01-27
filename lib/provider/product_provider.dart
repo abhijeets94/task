@@ -6,19 +6,71 @@ import 'package:http/http.dart' as http;
 import 'package:task/service/url_constants.dart';
 
 class ProductProvider extends ChangeNotifier {
+  List listProductsCategory = [];
   List listProducts = [];
   List<bool> selected = [];
-  List get productList => listProducts;
+
   List get productSelected => selected;
 
   Future getProductCategory() async {
     http.Response response =
         await http.get(Uri.parse('$apiProducts/categories'));
-    listProducts = jsonDecode(response.body);
+    listProductsCategory = jsonDecode(response.body);
 
-    for (int i = 0; i < listProducts.length; i++) {
+    for (int i = 0; i < listProductsCategory.length; i++) {
       selected.add(false);
     }
     notifyListeners();
+  }
+
+  Future getProductCategoryWise(String category) async {
+    http.Response response =
+        await http.get(Uri.parse('$apiProducts/category/$category'));
+    listProducts = [];
+    for (int i = 0; i < jsonDecode(response.body).length; i++) {
+      listProducts.add(
+        ProductModel.fromJson(
+          jsonEncode(
+            jsonDecode(response.body)[i],
+          ),
+        ),
+      );
+    }
+
+    notifyListeners();
+  }
+
+  Future getProducts() async {
+    http.Response response = await http.get(Uri.parse('$apiProducts/'));
+    for (int i = 0; i < jsonDecode(response.body).length; i++) {
+      listProducts.add(
+        ProductModel.fromJson(
+          jsonEncode(
+            jsonDecode(response.body)[i],
+          ),
+        ),
+      );
+    }
+    notifyListeners();
+  }
+
+  Future searchProduct(String query) async {
+    List searchedObjects = [];
+
+    if (query.isNotEmpty || query != "") {
+      for (int i = 0; i < listProducts.length; i++) {
+        searchedObjects = listProducts.where((element) {
+          return (element.title.toLowerCase().contains(query.toLowerCase()));
+        }).toList();
+      }
+      debugPrint("searched ===> $searchedObjects");
+
+      listProducts = searchedObjects;
+    } else {
+      listProducts = [];
+      selected = [];
+      getProductCategory();
+      getProducts();
+    }
   }
 }

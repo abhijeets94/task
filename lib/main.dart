@@ -29,7 +29,7 @@ class _ProductAppState extends State<ProductApp> {
 
   getToken() async {
     final prefereces = await SharedPreferences.getInstance();
-    token = prefereces.getString('token')!;
+    token = prefereces.getString('token') ?? '';
     setState(() {});
   }
 

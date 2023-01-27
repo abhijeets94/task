@@ -2,7 +2,7 @@ import 'dart:convert';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class Rating {
-  int rate;
+  double rate;
   int count;
   Rating({
     required this.rate,
@@ -18,7 +18,7 @@ class Rating {
 
   factory Rating.fromMap(Map<String, dynamic> map) {
     return Rating(
-      rate: map['rate'] as int,
+      rate: map['rate'].toDouble() as double,
       count: map['count'] as int,
     );
   }

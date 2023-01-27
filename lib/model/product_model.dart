@@ -6,7 +6,7 @@ import 'package:task/model/rating_model.dart';
 class ProductModel {
   int id;
   String title;
-  String price;
+  double price;
   String description;
   String category;
   String image;
@@ -37,7 +37,7 @@ class ProductModel {
     return ProductModel(
       id: map['id'] as int,
       title: map['title'] as String,
-      price: map['price'] as String,
+      price: map['price'].toDouble() as double,
       description: map['description'] as String,
       category: map['category'] as String,
       image: map['image'] as String,

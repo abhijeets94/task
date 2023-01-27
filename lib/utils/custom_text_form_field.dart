@@ -8,12 +8,14 @@ class CustomTextFormField extends StatelessWidget {
     required this.passwordField,
     required this.hintText,
     this.validator,
+    this.onchanged,
   }) : super(key: key);
 
   final TextEditingController controller;
   final TextInputType keyboardType;
   final bool passwordField;
   final String? Function(String?)? validator;
+  final Function(String)? onchanged;
   final String hintText;
 
   @override
@@ -32,6 +34,7 @@ class CustomTextFormField extends StatelessWidget {
           ),
         ),
       ),
+      onChanged: onchanged,
     );
   }
 }
