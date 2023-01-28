@@ -4,13 +4,14 @@ A new Flutter project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+For login:
+username: mor_2314
+password: 83r5^_
 
-A few resources to get you started if this is your first Flutter project:
+Packages used:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- [Provider: This is used for state management for the app. It makes it easy to handle the data across the app without requiring the whole UI. It works on streams and subscription model. ](https://pub.dev/packages/provider)
+- [http: Used for accessing REST API's](https://docs.flutter.dev/cookbookhttps://pub.dev/packages/http)
+- [sharedpreferences: storing token in local storage for avoiding login everytime app is restarted](https://pub.dev/packages/shared_preferences)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
