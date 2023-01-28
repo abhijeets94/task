@@ -3,14 +3,16 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:task/model/product_model.dart';
+import 'package:task/screens/product_screen.dart';
 import 'package:task/service/url_constants.dart';
+import 'package:task/utils/cart_widget.dart';
 import 'package:task/utils/custom_text_form_field.dart';
 
 import '../provider/product_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
-  static const String routeName = "/Homescreen";
+  static const String routeName = "/Home-Screen";
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -75,10 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(
               width: 5,
             ),
-            const Icon(
-              Icons.shopping_cart_outlined,
-              color: Colors.grey,
-            ),
+            const CartWidget()
           ],
         ),
         body: Column(
@@ -89,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
             productFilerChips(context),
             Provider.of<ProductProvider>(context).listProducts.length <= 0
                 ? SizedBox(
-                    height: MediaQuery.of(context).size.height / 1.2,
+                    height: MediaQuery.of(context).size.height / 1.3,
                     child: Center(child: const CircularProgressIndicator()),
                   )
                 : listAllProducts(context),
@@ -100,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   SizedBox listAllProducts(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height / 1.2,
+      height: MediaQuery.of(context).size.height / 1.3,
       child: GridView.builder(
           itemCount: Provider.of<ProductProvider>(context).listProducts.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -112,37 +111,46 @@ class _HomeScreenState extends State<HomeScreen> {
           itemBuilder: ((context, index) {
             var product =
                 Provider.of<ProductProvider>(context).listProducts[index];
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: SizedBox(
-                height: 120,
-                child: Column(
-                  children: [
-                    Container(
-                      height: MediaQuery.of(context).size.height / 7,
-                      child: Card(
-                        elevation: 5,
-                        child: Image.network(
-                          product.image,
-                          fit: BoxFit.fill,
-                          loadingBuilder: (BuildContext context, Widget child,
-                              ImageChunkEvent? loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Center(
-                              child: CircularProgressIndicator(
-                                value: loadingProgress.expectedTotalBytes !=
-                                        null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                        loadingProgress.expectedTotalBytes!
-                                    : null,
-                              ),
-                            );
-                          },
+            return GestureDetector(
+              onTap: () => Navigator.pushNamed(context, ProductScreen.routeName,
+                  arguments: {'productSelect': product}),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: SizedBox(
+                  height: 120,
+                  child: Column(
+                    children: [
+                      Container(
+                        height: MediaQuery.of(context).size.height / 7,
+                        child: Card(
+                          elevation: 5,
+                          child: Hero(
+                            tag: 'productImage${product.id}',
+                            child: Image.network(
+                              product.image,
+                              fit: BoxFit.fill,
+                              loadingBuilder: (BuildContext context,
+                                  Widget child,
+                                  ImageChunkEvent? loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    value: loadingProgress.expectedTotalBytes !=
+                                            null
+                                        ? loadingProgress
+                                                .cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                        : null,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                    Text("${product.title}", overflow: TextOverflow.ellipsis)
-                  ],
+                      Text("${product.title}", overflow: TextOverflow.ellipsis)
+                    ],
+                  ),
                 ),
               ),
             );
@@ -155,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: SizedBox(
         width: MediaQuery.of(context).size.width,
         child: ListView.builder(
-            padding: EdgeInsets.all(12),
+            padding: EdgeInsets.symmetric(horizontal: 12),
             scrollDirection: Axis.horizontal,
             shrinkWrap: true,
             itemCount: Provider.of<ProductProvider>(context)

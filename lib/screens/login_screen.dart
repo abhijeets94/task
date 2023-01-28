@@ -9,7 +9,7 @@ import '../utils/custom_text_form_field.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({Key? key}) : super(key: key);
-  static const String routeName = 'LoginScreen';
+  static const String routeName = '/Login-Screen';
 
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();

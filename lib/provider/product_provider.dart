@@ -9,6 +9,9 @@ class ProductProvider extends ChangeNotifier {
   List listProductsCategory = [];
   List listProducts = [];
   List<bool> selected = [];
+  int cartItemsCount = 0;
+  List<ProductModel> cartItems = [];
+  double totalPrice = 0;
 
   List get productSelected => selected;
 
@@ -72,5 +75,34 @@ class ProductProvider extends ChangeNotifier {
       getProductCategory();
       getProducts();
     }
+  }
+
+  void addcartItemsCount() {
+    cartItemsCount++;
+    notifyListeners();
+  }
+
+  void addCartItems(ProductModel product) {
+    cartItems.add(product);
+    notifyListeners();
+  }
+
+  void removeCartItems(int index) {
+    if (cartItems.length > 1) {
+      totalPrice -= cartItems[index].price;
+      cartItems.removeAt(index);
+      cartItemsCount--;
+    } else {
+      cartItems = [];
+      cartItemsCount = 0;
+      totalPrice = 0;
+    }
+    notifyListeners();
+  }
+
+  void setTotalPrice(double price) {
+    debugPrint("totalPrice: $totalPrice, price: $price");
+    totalPrice += price;
+    notifyListeners();
   }
 }
