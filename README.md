@@ -1,6 +1,6 @@
 # task
 
-A new Flutter project.
+Fake shopping app using REST API with search, cart and login features.
 
 ## Getting Started
 
