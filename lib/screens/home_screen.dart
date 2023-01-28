@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:provider/provider.dart';
 import 'package:task/model/product_model.dart';
 import 'package:task/screens/product_screen.dart';
@@ -20,6 +21,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   TextEditingController searchTextController = TextEditingController();
+  bool isLoadingHorizontal = false;
+  List<int> horizontalData = [];
+  final int increment = 10;
 
   // List filterChipsOptions = [];
   // List<bool> _selected = [false, false];
@@ -41,6 +45,22 @@ class _HomeScreenState extends State<HomeScreen> {
   getProductsCategoryList() async {
     await Provider.of<ProductProvider>(context, listen: false)
         .getProductCategory();
+  }
+
+  Future _loadMoreHorizontal() async {
+    setState(() {
+      isLoadingHorizontal = true;
+    });
+
+    // Add in an artificial delay
+    await new Future.delayed(const Duration(seconds: 2));
+
+    horizontalData.addAll(
+        List.generate(increment, (index) => horizontalData.length + index));
+
+    setState(() {
+      isLoadingHorizontal = false;
+    });
   }
 
   @override
@@ -100,61 +120,70 @@ class _HomeScreenState extends State<HomeScreen> {
   SizedBox listAllProducts(BuildContext context) {
     return SizedBox(
       height: MediaQuery.of(context).size.height / 1.3,
-      child: GridView.builder(
-          itemCount: Provider.of<ProductProvider>(context).listProducts.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 1.4,
-            mainAxisSpacing: 10.0,
-            crossAxisSpacing: 5.0,
-          ),
-          itemBuilder: ((context, index) {
-            var product =
-                Provider.of<ProductProvider>(context).listProducts[index];
-            return GestureDetector(
-              onTap: () => Navigator.pushNamed(context, ProductScreen.routeName,
-                  arguments: {'productSelect': product}),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: SizedBox(
-                  height: 120,
-                  child: Column(
-                    children: [
-                      Container(
-                        height: MediaQuery.of(context).size.height / 7,
-                        child: Card(
-                          elevation: 5,
-                          child: Hero(
-                            tag: 'productImage${product.id}',
-                            child: Image.network(
-                              product.image,
-                              fit: BoxFit.fill,
-                              loadingBuilder: (BuildContext context,
-                                  Widget child,
-                                  ImageChunkEvent? loadingProgress) {
-                                if (loadingProgress == null) return child;
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    value: loadingProgress.expectedTotalBytes !=
-                                            null
-                                        ? loadingProgress
-                                                .cumulativeBytesLoaded /
-                                            loadingProgress.expectedTotalBytes!
-                                        : null,
-                                  ),
-                                );
-                              },
+      child: LazyLoadScrollView(
+        isLoading: isLoadingHorizontal,
+        onEndOfPage: _loadMoreHorizontal,
+        child: GridView.builder(
+            itemCount:
+                Provider.of<ProductProvider>(context).listProducts.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 1.4,
+              mainAxisSpacing: 10.0,
+              crossAxisSpacing: 5.0,
+            ),
+            itemBuilder: ((context, index) {
+              var product =
+                  Provider.of<ProductProvider>(context).listProducts[index];
+              return GestureDetector(
+                onTap: () => Navigator.pushNamed(
+                    context, ProductScreen.routeName,
+                    arguments: {'productSelect': product}),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: SizedBox(
+                    height: 120,
+                    child: Column(
+                      children: [
+                        Container(
+                          height: MediaQuery.of(context).size.height / 7,
+                          child: Card(
+                            elevation: 5,
+                            child: Hero(
+                              tag: 'productImage${product.id}',
+                              child: Image.network(
+                                product.image,
+                                fit: BoxFit.fill,
+                                loadingBuilder: (BuildContext context,
+                                    Widget child,
+                                    ImageChunkEvent? loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      value:
+                                          loadingProgress.expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes!
+                                              : null,
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Text("${product.title}", overflow: TextOverflow.ellipsis)
-                    ],
+                        Text("${product.title}",
+                            overflow: TextOverflow.ellipsis)
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          })),
+              );
+            })),
+      ),
     );
   }
 

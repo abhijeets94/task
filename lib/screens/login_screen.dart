@@ -32,7 +32,7 @@ class LoginScreen extends StatelessWidget {
                       controller: nameController,
                       keyboardType: TextInputType.emailAddress,
                       passwordField: false,
-                      hintText: "Email",
+                      hintText: "Username",
                     ),
                     const SizedBox(
                       height: 10,
