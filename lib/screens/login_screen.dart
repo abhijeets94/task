@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:task/model/auth_user_model.dart';
 import 'package:task/provider/auth_provider.dart';
+import 'package:task/screens/app_drawer.dart';
 import 'package:task/screens/home_screen.dart';
 import '../utils/custom_text_form_field.dart';
 
@@ -58,7 +59,7 @@ class LoginScreen extends StatelessWidget {
                     String token =
                         AuthUserModel.fromMap(jsonDecode(value.toJson())).token;
                     prefs.setString('token', token);
-                    Navigator.popAndPushNamed(context, HomeScreen.routeName);
+                    Navigator.popAndPushNamed(context, AppDrawer.routeName);
                   });
                 }
               },

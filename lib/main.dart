@@ -4,8 +4,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:task/provider/auth_provider.dart';
 import 'package:task/provider/product_provider.dart';
 import 'package:task/routes/routes.dart';
+import 'package:task/screens/app_drawer.dart';
 import 'package:task/screens/home_screen.dart';
 import 'package:task/screens/login_screen.dart';
+import 'package:task/utils/theme.dart';
 
 void main() {
   runApp(ProductApp());
@@ -22,7 +24,6 @@ class _ProductAppState extends State<ProductApp> {
   String token = '';
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getToken();
   }
@@ -42,7 +43,11 @@ class _ProductAppState extends State<ProductApp> {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: token.isEmpty ? LoginScreen() : HomeScreen(),
+        themeMode: ThemeMode.system,
+        theme: MyThemes.darkTheme,
+        darkTheme: MyThemes.darkTheme,
+        home: token.isEmpty ? LoginScreen() : const AppDrawer(),
+        // home: const AppDrawer(),
         onGenerateRoute: AppRoutes.onGenerateRoute,
       ),
     );

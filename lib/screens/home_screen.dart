@@ -21,18 +21,15 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   TextEditingController searchTextController = TextEditingController();
+  final ScrollController _controller = ScrollController();
   bool isLoadingHorizontal = false;
   List<int> horizontalData = [];
   final int increment = 10;
 
-  // List filterChipsOptions = [];
-  // List<bool> _selected = [false, false];
-
-  var productList;
+  // var productList;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getProductsCategoryList();
     getProductsList();
@@ -67,9 +64,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        backgroundColor: Colors.white,
+        // backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          // backgroundColor: Colors.white,
           elevation: 0,
           title: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -106,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
             //filterchips
             Divider(),
             productFilerChips(context),
-            Provider.of<ProductProvider>(context).listProducts.length <= 0
+            Provider.of<ProductProvider>(context).listProducts.isEmpty
                 ? SizedBox(
                     height: MediaQuery.of(context).size.height / 1.3,
                     child: Center(child: const CircularProgressIndicator()),
@@ -124,6 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
         isLoading: isLoadingHorizontal,
         onEndOfPage: _loadMoreHorizontal,
         child: GridView.builder(
+            controller: _controller,
             itemCount:
                 Provider.of<ProductProvider>(context).listProducts.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -147,13 +145,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Container(
                           height: MediaQuery.of(context).size.height / 7,
+                          width: 300,
+                          color: Colors.white,
                           child: Card(
                             elevation: 5,
                             child: Hero(
                               tag: 'productImage${product.id}',
                               child: Image.network(
                                 product.image,
-                                fit: BoxFit.fill,
+                                fit: BoxFit.contain,
                                 loadingBuilder: (BuildContext context,
                                     Widget child,
                                     ImageChunkEvent? loadingProgress) {

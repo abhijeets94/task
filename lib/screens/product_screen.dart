@@ -22,14 +22,14 @@ class _ProductScreenState extends State<ProductScreen> {
     final productSelected = args['productSelect'];
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          // backgroundColor: Colors.white,
           elevation: 0,
           leading: IconButton(
             onPressed: () => Navigator.pop(context),
             icon: const Icon(Icons.arrow_back_ios_new_outlined),
             color: Colors.grey,
           ),
-          actions: [
+          actions: const [
             CartWidget(),
           ],
         ),
@@ -42,11 +42,13 @@ class _ProductScreenState extends State<ProductScreen> {
                 Hero(
                   tag: 'productImage${productSelected.id}',
                   child: Container(
+                    color: Colors.white,
                     alignment: Alignment.bottomCenter,
                     height: MediaQuery.of(context).size.height / 2,
                     width: MediaQuery.of(context).size.height / 2,
                     child: Card(
-                      elevation: 5,
+                      elevation: 10,
+                      shadowColor: Colors.grey[400],
                       child: Image.network(productSelected.image),
                     ),
                   ),
