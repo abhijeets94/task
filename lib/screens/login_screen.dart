@@ -20,50 +20,61 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Stack(
           children: [
-            Form(
-              key: _loginFormKey,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    CustomTextFormField(
-                      controller: nameController,
-                      keyboardType: TextInputType.emailAddress,
-                      passwordField: false,
-                      hintText: "Username",
+            Provider.of<AuthProvider>(context).isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : Container(),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Form(
+                  key: _loginFormKey,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        CustomTextFormField(
+                          controller: nameController,
+                          keyboardType: TextInputType.emailAddress,
+                          passwordField: false,
+                          hintText: "Username",
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        CustomTextFormField(
+                          controller: passwordController,
+                          keyboardType: TextInputType.visiblePassword,
+                          passwordField: true,
+                          hintText: "Password",
+                        ),
+                      ],
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    CustomTextFormField(
-                      controller: passwordController,
-                      keyboardType: TextInputType.visiblePassword,
-                      passwordField: true,
-                      hintText: "Password",
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                bool validated = _loginFormKey.currentState!.validate();
-                final prefs = await SharedPreferences.getInstance();
-                if (validated) {
-                  Provider.of<AuthProvider>(context, listen: false)
-                      .userLogin(nameController.text, passwordController.text)
-                      .then((value) {
-                    String token =
-                        AuthUserModel.fromMap(jsonDecode(value.toJson())).token;
-                    prefs.setString('token', token);
-                    Navigator.popAndPushNamed(context, AppDrawer.routeName);
-                  });
-                }
-              },
-              child: Text("Login"),
+                ElevatedButton(
+                  onPressed: () async {
+                    bool validated = _loginFormKey.currentState!.validate();
+                    final prefs = await SharedPreferences.getInstance();
+                    if (validated) {
+                      Provider.of<AuthProvider>(context, listen: false)
+                          .userLogin(
+                              nameController.text, passwordController.text)
+                          .then((value) {
+                        String token =
+                            AuthUserModel.fromMap(jsonDecode(value.toJson()))
+                                .token;
+                        prefs.setString('token', token);
+                        Navigator.popAndPushNamed(context, AppDrawer.routeName);
+                      });
+                      Provider.of<AuthProvider>(context, listen: false)
+                          .loading();
+                    }
+                  },
+                  child: Text("Login"),
+                ),
+              ],
             ),
           ],
         ),
